@@ -3,11 +3,31 @@ import { Link } from 'react-router'
 import Post from '../components/Post'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import {Client} from 'subscriptions-transport-ws'
 
 class ListPage extends React.Component {
 
   static propTypes = {
     data: React.PropTypes.object,
+  }
+
+  componentWillMount() {
+    const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__', {
+      timeout: 10000
+    })
+
+    wsClient.subscribe({
+      query: `subscription {
+        createPost {
+          id
+          imageUrl
+          description
+        }
+      }`,
+      variables: null
+    }, (err, res) => {
+      this.props.data.refetch()
+    })
   }
 
   render () {
