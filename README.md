@@ -29,6 +29,12 @@ Open `src/index.js` and paste your endpoint to the following line:
 const networkInterface = createNetworkInterface('https://api.graph.cool/simple/v1/__PROJECT_ID__')
 ```
 
+Open `src/components/ListPage.js` and paste your endpoint to the following line:
+
+```js
+const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__', {
+```
+
 ### 3. Run the example
 
 You're done configuring the example application. Please run the following command and open [localhost:3000](http://localhost:3000) in your browser. Make sure to open two or more tabs with the page to see subscriptions in action. Have fun exploring! 🎉
