@@ -38,6 +38,11 @@ npm install
 npm start
 ```
 
+### 4. Subscriptions Debugger
+
+You can use the [subscriptions debugger](http://graphcool-subscriptions-debugger.surge.sh/) to test subscriptions.
+
+Simply run a subscription query to subscribe
 
 ## Help & Community [![Slack Status](https://slack.graph.cool/badge.svg)](https://slack.graph.cool)
 
