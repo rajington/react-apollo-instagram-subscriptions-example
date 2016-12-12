@@ -23,16 +23,13 @@ type Post {
 
 ### 2. Configure app data endpoint
 
-Open `src/index.js` and paste your endpoint to the following line:
+Open `src/index.js` and replace `__PROJECT_ID__` with your endpoint in the following lines:
 
 ```js
-const networkInterface = createNetworkInterface('https://api.graph.cool/simple/v1/__PROJECT_ID__')
-```
-
-Open `src/components/ListPage.js` and paste your endpoint to the following line:
-
-```js
-const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__', {
+const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__');
+const networkInterface = createNetworkInterface({
+  uri: 'https://api.graph.cool/simple/v1/__PROJECT_ID__',
+})
 ```
 
 ### 3. Run the example
@@ -48,7 +45,17 @@ npm start
 
 You can use the [subscriptions debugger](http://graphcool-subscriptions-debugger.surge.sh/) to test subscriptions.
 
-Simply run a subscription query to subscribe
+Simply run a subscription query to subscribe:
+
+```graphql
+subscription {
+  createPost {
+    id
+    imageUrl
+    description
+  }
+}
+```
 
 ## Help & Community [![Slack Status](https://slack.graph.cool/badge.svg)](https://slack.graph.cool)
 
