@@ -11,23 +11,45 @@ class ListPage extends React.Component {
     data: React.PropTypes.object,
   }
 
-  componentWillMount() {
-    const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__', {
-      timeout: 10000
-    })
-
-    wsClient.subscribe({
-      query: `subscription {
-        createPost {
-          id
-          imageUrl
-          description
+  componentWillReceiveProps(newProps) {
+    if (!newProps.data.loading) {
+      if (this.subscription) {
+        if (newProps.data.allPosts !== this.props.data.allPosts) {
+          // if the feed has changed, we need to unsubscribe before resubscribing
+          this.subscription()
+        } else {
+          // we already have an active subscription with the right params
+          return
         }
-      }`,
-      variables: null
-    }, (err, res) => {
-      this.props.data.refetch()
-    })
+      }
+      this.subscription = newProps.data.subscribeToMore({
+        document: gql`
+          subscription {
+            createPost {
+              id
+              imageUrl
+              description
+            }
+          }
+        `,
+        variables: null,
+
+        // this is where the magic happens.
+        updateQuery: (previousState, {subscriptionData}) => {
+          const newEntry = subscriptionData.data.createPost;
+
+          return {
+            allPosts: [
+              ...previousState.allPosts,
+              {
+                ...newEntry
+              }
+            ]
+          }
+        },
+        onError: (err) => console.error(err),
+      })
+    }
   }
 
   render () {

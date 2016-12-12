@@ -5,10 +5,15 @@ import CreatePage from './components/CreatePage'
 import { Router, Route, browserHistory } from 'react-router'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
+import { Client } from 'subscriptions-transport-ws'
+import { addGraphQLSubscriptions } from './util'
 import 'tachyons'
 import './index.css'
 
-const networkInterface = createNetworkInterface('https://api.graph.cool/simple/v1/__PROJECT_ID__')
+const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__');
+const networkInterface = createNetworkInterface({
+  uri: 'https://api.graph.cool/simple/v1/__PROJECT_ID__',
+})
 
 // The x-graphcool-source header is to let the server know that the example app has started.
 // (Not necessary for normal projects)
@@ -23,7 +28,12 @@ networkInterface.use([{
   },
 }])
 
-const client = new ApolloClient({ networkInterface })
+const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
+  networkInterface,
+  wsClient,
+)
+
+const client = new ApolloClient({ networkInterface: networkInterfaceWithSubscriptions })
 
 ReactDOM.render((
   <ApolloProvider client={client}>
