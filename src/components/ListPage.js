@@ -3,7 +3,6 @@ import { Link } from 'react-router'
 import Post from '../components/Post'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import {Client} from 'subscriptions-transport-ws'
 
 class ListPage extends React.Component {
 
@@ -62,7 +61,7 @@ class ListPage extends React.Component {
           + New Post
         </Link>
         <div className='w-100' style={{ maxWidth: 400 }}>
-          {this.props.data.allPosts.reverse().map((post) =>
+          {this.props.data.allPosts.map((post) =>
             <Post key={post.id} post={post} refresh={() => this.props.data.refetch()} />
           )}
         </div>
@@ -72,7 +71,7 @@ class ListPage extends React.Component {
 }
 
 const FeedQuery = gql`query allPosts {
-  allPosts {
+  allPosts(orderBy: createdAt_DESC) {
     id
     imageUrl
     description
