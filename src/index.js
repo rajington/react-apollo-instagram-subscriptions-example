@@ -5,12 +5,11 @@ import CreatePage from './components/CreatePage'
 import { Router, Route, browserHistory } from 'react-router'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
-import { Client } from 'subscriptions-transport-ws'
-import { addGraphQLSubscriptions } from './util'
+import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-transport-ws'
 import 'tachyons'
 import './index.css'
 
-const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__');
+const wsClient = new SubscriptionClient('ws://subscriptions.graph.cool/__PROJECT_ID__');
 const networkInterface = createNetworkInterface({
   uri: 'https://api.graph.cool/simple/v1/__PROJECT_ID__',
 })
