@@ -39,10 +39,10 @@ class ListPage extends React.Component {
 
           return {
             allPosts: [
-              ...previousState.allPosts,
               {
                 ...newEntry
-              }
+              },
+              ...previousState.allPosts
             ]
           }
         },
@@ -78,6 +78,10 @@ const FeedQuery = gql`query allPosts {
   }
 }`
 
-const ListPageWithData = graphql(FeedQuery)(ListPage)
+const ListPageWithData = graphql(FeedQuery, {
+  options: {
+    forceFetch: true
+  }
+})(ListPage)
 
 export default ListPageWithData

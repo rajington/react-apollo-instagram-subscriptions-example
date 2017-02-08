@@ -32,7 +32,10 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
   wsClient,
 )
 
-const client = new ApolloClient({ networkInterface: networkInterfaceWithSubscriptions })
+const client = new ApolloClient({
+  networkInterface: networkInterfaceWithSubscriptions,
+  dataIdFromObject: o => o.id
+})
 
 ReactDOM.render((
   <ApolloProvider client={client}>
