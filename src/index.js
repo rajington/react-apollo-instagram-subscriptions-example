@@ -29,7 +29,7 @@ networkInterface.use([{
 
 const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
   networkInterface,
-  wsClient,
+  wsClient
 )
 
 const client = new ApolloClient({
