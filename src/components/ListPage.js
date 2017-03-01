@@ -24,10 +24,14 @@ class ListPage extends React.Component {
       this.subscription = newProps.data.subscribeToMore({
         document: gql`
           subscription {
-            createPost {
-              id
-              imageUrl
-              description
+            Post(filter: {
+              mutation_in: [CREATED]
+            }) {
+              node {
+                id
+                imageUrl
+                description
+              }
             }
           }
         `,
@@ -35,7 +39,7 @@ class ListPage extends React.Component {
 
         // this is where the magic happens.
         updateQuery: (previousState, {subscriptionData}) => {
-          const newEntry = subscriptionData.data.createPost;
+          const newEntry = subscriptionData.data.Post.node
 
           return {
             allPosts: [
