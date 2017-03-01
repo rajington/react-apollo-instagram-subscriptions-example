@@ -1,4 +1,6 @@
 # react-apollo-instagram-example
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/graphcool-examples/react-apollo-instagram-subscriptions-example.svg)](https://greenkeeper.io/)
 ![](http://i.imgur.com/CH44AZF.png)
 
 
