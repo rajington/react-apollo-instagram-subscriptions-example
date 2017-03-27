@@ -9,7 +9,7 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import 'tachyons'
 import './index.css'
 
-const wsClient = new SubscriptionClient('ws://subscriptions.graph.cool/__PROJECT_ID__')
+const wsClient = new SubscriptionClient('wss://subscriptions.graph.cool/v1/__PROJECT_ID__')
 const networkInterface = createNetworkInterface({
   uri: 'https://api.graph.cool/simple/v1/__PROJECT_ID__',
 })
