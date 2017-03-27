@@ -26,7 +26,7 @@ type Post {
 Open `src/index.js` and replace `__PROJECT_ID__` with your endpoint in the following lines:
 
 ```js
-const wsClient = new Client('ws://subscriptions.graph.cool/__PROJECT_ID__');
+const wsClient = new SubscriptionClient('wss://subscriptions.graph.cool/v1/__PROJECT_ID__')
 const networkInterface = createNetworkInterface({
   uri: 'https://api.graph.cool/simple/v1/__PROJECT_ID__',
 })
@@ -43,7 +43,9 @@ npm start
 
 ### 4. Subscriptions Debugger
 
-You can use the [subscriptions debugger](http://graphcool-subscriptions-debugger.surge.sh/) to test subscriptions.
+You can use the Graphcool Playground to test subscriptions.
+
+![](http://graphcool-random.s3.amazonaws.com/images/subscriptions.gif)
 
 Simply run a subscription query to subscribe:
 
