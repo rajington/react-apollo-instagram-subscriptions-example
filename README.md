@@ -49,10 +49,14 @@ Simply run a subscription query to subscribe:
 
 ```graphql
 subscription {
-  createPost {
-    id
-    imageUrl
-    description
+  Post(filter: {
+    mutation_in: [CREATED]
+  }) {
+    node {
+      id
+      imageUrl
+      description
+    }
   }
 }
 ```
