@@ -6,6 +6,59 @@ import Comment from '../components/Comment'
 import CommentForm from '../components/CommentForm'
 
 class CampaignDetail extends React.Component {
+  componentWillReceiveProps(newProps) {
+    if (!newProps.data.loading) {
+      if (this.subscription) {
+        if (newProps.data.Campaign !== this.props.data.Campaign) {
+          // if the feed has changed, we need to unsubscribe before resubscribing
+          this.subscription()
+        } else {
+          // we already have an active subscription with the right params
+          return
+        }
+      }
+      this.subscription = newProps.data.subscribeToMore({
+        document: gql`
+          subscription newComments($slug:String){
+            Comment(
+              filter:{
+                mutation_in:[CREATED]
+                node:{
+                  campaign:{
+                    slug: $slug
+                  }
+                }
+              }
+            ) {
+              node{
+                id
+                author
+                content
+              }
+            }
+          }
+        `,
+        variables: {
+          slug: newProps.params.campaignSlug,
+        },
+        updateQuery: (previousState, {subscriptionData}) => {
+          const newEntry = subscriptionData.data.Comment.node
+
+          return {
+            Campaign: {
+              ...previousState.Campaign,
+              comments: [
+                ...previousState.Campaign.comments,
+                newEntry,
+              ],
+            },
+          }
+        },
+        onError: (err) => console.error(err),
+      })
+    }
+  }
+
   render () {
     if (this.props.data.loading) {
       return (<div>Loading</div>)
@@ -79,9 +132,9 @@ const CampaignDetailWithData = graphql(CampaignQuery, {
   options: (ownProps) => ({
     forceFetch: true,
     variables: {
-      slug: ownProps.params.campaignSlug
+      slug: ownProps.params.campaignSlug,
     },
-  })
+  }),
 })(withRouter(CampaignDetail))
 
 export default CampaignDetailWithData
