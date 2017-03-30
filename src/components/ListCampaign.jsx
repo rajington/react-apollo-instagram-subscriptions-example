@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import Post from '../components/Post'
+import Post from '../components/Campaign'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -74,11 +74,12 @@ class ListPage extends React.Component {
   }
 }
 
-const FeedQuery = gql`query allPosts {
-  allPosts(orderBy: createdAt_DESC) {
+const FeedQuery = gql`query allCampaigns {
+  allCampaigns(orderBy: createdAt_DESC) {
     id
-    imageUrl
+    title
     description
+    imageUrl
   }
 }`
 
