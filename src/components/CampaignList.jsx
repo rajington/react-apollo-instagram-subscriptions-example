@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import Post from '../components/Campaign'
+import CampaignListItem from '../components/CampaignListItem'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -13,7 +13,7 @@ class ListPage extends React.Component {
   componentWillReceiveProps(newProps) {
     if (!newProps.data.loading) {
       if (this.subscription) {
-        if (newProps.data.allPosts !== this.props.data.allPosts) {
+        if (newProps.data.allCampaigns !== this.props.data.allCampaigns) {
           // if the feed has changed, we need to unsubscribe before resubscribing
           this.subscription()
         } else {
@@ -24,12 +24,13 @@ class ListPage extends React.Component {
       this.subscription = newProps.data.subscribeToMore({
         document: gql`
           subscription {
-            Post(filter: {
+            Campaign(filter: {
               mutation_in: [CREATED]
             }) {
               node {
                 id
                 imageUrl
+                title
                 description
               }
             }
@@ -39,14 +40,14 @@ class ListPage extends React.Component {
 
         // this is where the magic happens.
         updateQuery: (previousState, {subscriptionData}) => {
-          const newEntry = subscriptionData.data.Post.node
+          const newEntry = subscriptionData.data.Campaign.node
 
           return {
-            allPosts: [
+            allCampaigns: [
               {
                 ...newEntry
               },
-              ...previousState.allPosts
+              ...previousState.allCampaigns
             ]
           }
         },
@@ -65,8 +66,8 @@ class ListPage extends React.Component {
           + New Post
         </Link>
         <div className='w-100' style={{ maxWidth: 400 }}>
-          {this.props.data.allPosts.map((post) =>
-            <Post key={post.id} post={post} refresh={() => this.props.data.refetch()} />
+          {this.props.data.allCampaigns.map((campaign) =>
+            <CampaignListItem key={campaign.id} campaign={campaign} />
           )}
         </div>
       </div>
