@@ -1,93 +1,57 @@
 import React from 'react'
-import { Link } from 'react-router'
-import CampaignListItem from '../components/CampaignListItem'
+import { withRouter } from 'react-router'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-class ListPage extends React.Component {
+class CampaignDetail extends React.Component {
 
   static propTypes = {
     data: React.PropTypes.object,
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (!newProps.data.loading) {
-      if (this.subscription) {
-        if (newProps.data.allCampaigns !== this.props.data.allCampaigns) {
-          // if the feed has changed, we need to unsubscribe before resubscribing
-          this.subscription()
-        } else {
-          // we already have an active subscription with the right params
-          return
-        }
-      }
-      this.subscription = newProps.data.subscribeToMore({
-        document: gql`
-          subscription {
-            Campaign(filter: {
-              mutation_in: [CREATED]
-            }) {
-              node {
-                id
-                imageUrl
-                title
-              }
-            }
-          }
-        `,
-        variables: null,
-
-        // this is where the magic happens.
-        updateQuery: (previousState, {subscriptionData}) => {
-          const newEntry = subscriptionData.data.Campaign.node
-
-          return {
-            allCampaigns: [
-              {
-                ...newEntry
-              },
-              ...previousState.allCampaigns
-            ]
-          }
-        },
-        onError: (err) => console.error(err),
-      })
-    }
+    router: React.PropTypes.object.isRequired,
   }
 
   render () {
     if (this.props.data.loading) {
       return (<div>Loading</div>)
     }
+
+    const {
+      data: {
+        Campaign: {
+          title,
+          description,
+          imageUrl,
+        },
+      },
+    } = this.props
+
     return (
       <div className='w-100 flex justify-center'>
-        <Link to='/create' className='fixed bg-white top-0 right-0 pa4 ttu dim black no-underline'>
-          + New Post
-        </Link>
         <div className='w-100' style={{ maxWidth: 400 }}>
-          {this.props.data.allCampaigns.map((campaign) =>
-            <CampaignListItem key={campaign.id} campaign={campaign} />
-          )}
+          {title}
         </div>
       </div>
     )
   }
 }
 
-const FeedQuery = gql`
-  query allCampaigns {
-    allCampaigns(orderBy: createdAt_DESC) {
-      id
+const CampaignQuery = gql`
+  query Campaign($slug: String!) {
+    Campaign(slug: $slug) {
       title
+      description
       imageUrl
     }
   }
 `
 
-const ListPageWithData = graphql(FeedQuery, {
-  options: {
-    forceFetch: true
-  }
-})(ListPage)
+const CampaignDetailWithData = graphql(CampaignQuery, {
+  options: (ownProps) => ({
+    forceFetch: true,
+    variables: {
+      slug: ownProps.params.campaignSlug
+    },
+  })
+})(withRouter(CampaignDetail))
 
-export default ListPageWithData
+export default CampaignDetailWithData
