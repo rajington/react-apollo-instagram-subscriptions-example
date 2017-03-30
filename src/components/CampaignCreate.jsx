@@ -2,8 +2,9 @@ import React from 'react'
 import { withRouter } from 'react-router'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { slugify } from 'underscore.string'
 
-class CreatePage extends React.Component {
+class CampaignCreate extends React.Component {
 
   static propTypes = {
     router: React.PropTypes.object,
@@ -11,6 +12,7 @@ class CreatePage extends React.Component {
   }
 
   state = {
+    title: '',
     description: '',
     imageUrl: '',
   }
@@ -19,6 +21,12 @@ class CreatePage extends React.Component {
     return (
       <div className='w-100 pa4 flex justify-center'>
         <div style={{ maxWidth: 400 }} className=''>
+          <input
+            className='w-100 pa3 mv2'
+            value={this.state.title}
+            placeholder='Title'
+            onChange={(e) => this.setState({title: e.target.value})}
+          />
           <input
             className='w-100 pa3 mv2'
             value={this.state.description}
@@ -34,7 +42,7 @@ class CreatePage extends React.Component {
           {this.state.imageUrl &&
             <img src={this.state.imageUrl} role='presentation' className='w-100 mv3' />
           }
-          {this.state.description && this.state.imageUrl &&
+          {this.state.title && this.state.imageUrl &&
             <button className='pa3 bg-black-10 bn dim ttu pointer' onClick={this.handlePost}>Post</button>
           }
         </div>
@@ -43,8 +51,18 @@ class CreatePage extends React.Component {
   }
 
   handlePost = () => {
-    const {description, imageUrl} = this.state
-    this.props.addPost({ description, imageUrl })
+    const {
+      title,
+      slug = slugify(title),
+      description,
+      imageUrl,
+    } = this.state
+    this.props.addCampaign({
+      slug,
+      title,
+      description,
+      imageUrl,
+    })
       .then(() => {
         this.props.router.push('/')
       })
@@ -52,30 +70,42 @@ class CreatePage extends React.Component {
 }
 
 const addMutation = gql`
-  mutation addPost($description: String!, $imageUrl: String!) {
-    createPost(description: $description, imageUrl: $imageUrl) {
+  mutation addCampaign(
+    $slug: String!,
+    $title: String!,
+    $description: String!,
+    $imageUrl: String!
+  ) {
+    createCampaign(
+      slug: $slug,
+      title: $title,
+      description: $description,
+      imageUrl: $imageUrl
+    ) {
       id
+      slug
+      title
       description
       imageUrl
     }
   }
 `
 
-const PageWithMutation = graphql(addMutation, {
+const CampaignCreateWithMutation = graphql(addMutation, {
   props: ({ ownProps, mutate }) => ({
-    addPost: ({ description, imageUrl }) =>
+    addCampaign: ({ slug, title, description, imageUrl }) =>
       mutate({
-        variables: { description, imageUrl },
+        variables: { slug, title, description, imageUrl },
         updateQueries: {
-          allPosts: (state, { mutationResult }) => {
-            const newPost = mutationResult.data.createPost
+          allCampaigns: (state, { mutationResult }) => {
+            const newCampaign = mutationResult.data.createCampaign
             return {
-              allPosts: [...state.allPosts, newPost]
+              allCampaigns: [...state.allCampaigns, newCampaign]
             }
           },
         },
       })
   })
-})(withRouter(CreatePage))
+})(withRouter(CampaignCreate))
 
-export default PageWithMutation
+export default CampaignCreateWithMutation
