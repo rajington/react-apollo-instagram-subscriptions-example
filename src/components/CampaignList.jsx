@@ -31,7 +31,6 @@ class ListPage extends React.Component {
                 id
                 imageUrl
                 title
-                description
               }
             }
           }
@@ -75,14 +74,15 @@ class ListPage extends React.Component {
   }
 }
 
-const FeedQuery = gql`query allCampaigns {
-  allCampaigns(orderBy: createdAt_DESC) {
-    id
-    title
-    description
-    imageUrl
+const FeedQuery = gql`
+  query allCampaigns {
+    allCampaigns(orderBy: createdAt_DESC) {
+      id
+      title
+      imageUrl
+    }
   }
-}`
+`
 
 const ListPageWithData = graphql(FeedQuery, {
   options: {
