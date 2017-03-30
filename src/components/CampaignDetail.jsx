@@ -3,15 +3,9 @@ import { withRouter } from 'react-router'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import Comment from '../components/Comment'
-
+import CommentForm from '../components/CommentForm'
 
 class CampaignDetail extends React.Component {
-
-  static propTypes = {
-    data: React.PropTypes.object,
-    router: React.PropTypes.object.isRequired,
-  }
-
   render () {
     if (this.props.data.loading) {
       return (<div>Loading</div>)
@@ -20,6 +14,7 @@ class CampaignDetail extends React.Component {
     const {
       data: {
         Campaign: {
+          id,
           title,
           description,
           imageUrl,
@@ -53,6 +48,9 @@ class CampaignDetail extends React.Component {
                   {...comment}
                 />
               )}
+              <CommentForm
+                campaignId={id}
+              />
             </div>
           </div>
         </div>
@@ -64,6 +62,7 @@ class CampaignDetail extends React.Component {
 const CampaignQuery = gql`
   query Campaign($slug: String!) {
     Campaign(slug: $slug) {
+      id
       title
       description
       imageUrl

@@ -57,6 +57,7 @@ class CampaignCreate extends React.Component {
       description,
       imageUrl,
     } = this.state
+    
     this.props.addCampaign({
       slug,
       title,
