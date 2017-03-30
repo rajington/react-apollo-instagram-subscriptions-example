@@ -1,48 +1,93 @@
 import React from 'react'
+import { Link } from 'react-router'
+import CampaignListItem from '../components/CampaignListItem'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-class Post extends React.Component {
+class ListPage extends React.Component {
 
   static propTypes = {
-    post: React.PropTypes.object,
-    mutate: React.PropTypes.func,
-    refresh: React.PropTypes.func,
+    data: React.PropTypes.object,
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (!newProps.data.loading) {
+      if (this.subscription) {
+        if (newProps.data.allCampaigns !== this.props.data.allCampaigns) {
+          // if the feed has changed, we need to unsubscribe before resubscribing
+          this.subscription()
+        } else {
+          // we already have an active subscription with the right params
+          return
+        }
+      }
+      this.subscription = newProps.data.subscribeToMore({
+        document: gql`
+          subscription {
+            Campaign(filter: {
+              mutation_in: [CREATED]
+            }) {
+              node {
+                id
+                imageUrl
+                title
+              }
+            }
+          }
+        `,
+        variables: null,
+
+        // this is where the magic happens.
+        updateQuery: (previousState, {subscriptionData}) => {
+          const newEntry = subscriptionData.data.Campaign.node
+
+          return {
+            allCampaigns: [
+              {
+                ...newEntry
+              },
+              ...previousState.allCampaigns
+            ]
+          }
+        },
+        onError: (err) => console.error(err),
+      })
+    }
   }
 
   render () {
+    if (this.props.data.loading) {
+      return (<div>Loading</div>)
+    }
     return (
-      <div className='pa3 bg-black-05 ma3'>
-        <div
-          className='w-100'
-          style={{
-            backgroundImage: `url(${this.props.post.imageUrl})`,
-            backgroundSize: 'cover',
-            paddingBottom: '100%',
-          }}
-        />
-        <div className='pt3'>
-          {this.props.post.description}&nbsp;
-          <span className='red f6 pointer dim' onClick={this.handleDelete}>Delete</span>
+      <div className='w-100 flex justify-center'>
+        <Link to='/create' className='fixed bg-white top-0 right-0 pa4 ttu dim black no-underline'>
+          + New Post
+        </Link>
+        <div className='w-100' style={{ maxWidth: 400 }}>
+          {this.props.data.allCampaigns.map((campaign) =>
+            <CampaignListItem key={campaign.id} campaign={campaign} />
+          )}
         </div>
       </div>
     )
   }
-
-  handleDelete = () => {
-    this.props.mutate({variables: {id: this.props.post.id}})
-      .then(this.props.refresh)
-  }
 }
 
-const deleteMutation = gql`
-  mutation deletePost($id: ID!) {
-    deletePost(id: $id) {
+const FeedQuery = gql`
+  query allCampaigns {
+    allCampaigns(orderBy: createdAt_DESC) {
       id
+      title
+      imageUrl
     }
   }
 `
 
-const PostWithMutation = graphql(deleteMutation)(Post)
+const ListPageWithData = graphql(FeedQuery, {
+  options: {
+    forceFetch: true
+  }
+})(ListPage)
 
-export default PostWithMutation
+export default ListPageWithData
