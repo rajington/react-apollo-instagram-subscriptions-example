@@ -10,9 +10,9 @@ import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-trans
 import 'tachyons'
 import './index.css'
 
-const wsClient = new SubscriptionClient('wss://subscriptions.graph.cool/v1/cj0whq9fvimuh0118ryux5bae')
+const wsClient = new SubscriptionClient('wss://subscriptions.graph.cool/v1/ride-for-a-cause')
 const networkInterface = createNetworkInterface({
-  uri: 'https://api.graph.cool/simple/v1/cj0whq9fvimuh0118ryux5bae',
+  uri: 'https://api.graph.cool/simple/v1/ride-for-a-cause',
 })
 
 // The x-graphcool-source header is to let the server know that the example app has started.
