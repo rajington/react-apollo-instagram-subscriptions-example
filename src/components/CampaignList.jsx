@@ -5,11 +5,6 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
 class ListPage extends React.Component {
-
-  static propTypes = {
-    data: React.PropTypes.object,
-  }
-
   componentWillReceiveProps(newProps) {
     if (!newProps.data.loading) {
       if (this.subscription) {
