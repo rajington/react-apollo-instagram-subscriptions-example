@@ -2,7 +2,9 @@
   "name": "react-apollo-instagram-example",
   "version": "0.0.1",
   "private": true,
+  "homepage": "https://rajington.github.io/ride-for-a-cause",
   "devDependencies": {
+    "gh-pages": "^0.12.0",
     "react-scripts": "0.8.1"
   },
   "dependencies": {
@@ -21,7 +23,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "./node_modules/react-scripts/config/eslint.js"
