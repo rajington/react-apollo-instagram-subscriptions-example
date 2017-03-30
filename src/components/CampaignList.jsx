@@ -4,74 +4,32 @@ import CampaignListItem from '../components/CampaignListItem'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-class ListPage extends React.Component {
-  componentWillReceiveProps(newProps) {
-    if (!newProps.data.loading) {
-      if (this.subscription) {
-        if (newProps.data.allCampaigns !== this.props.data.allCampaigns) {
-          // if the feed has changed, we need to unsubscribe before resubscribing
-          this.subscription()
-        } else {
-          // we already have an active subscription with the right params
-          return
-        }
-      }
-      this.subscription = newProps.data.subscribeToMore({
-        document: gql`
-          subscription {
-            Campaign(filter: {
-              mutation_in: [CREATED]
-            }) {
-              node {
-                id
-                imageUrl
-                title
-              }
-            }
-          }
-        `,
-        variables: null,
-
-        // this is where the magic happens.
-        updateQuery: (previousState, {subscriptionData}) => {
-          const newEntry = subscriptionData.data.Campaign.node
-
-          return {
-            allCampaigns: [
-              {
-                ...newEntry
-              },
-              ...previousState.allCampaigns
-            ]
-          }
-        },
-        onError: (err) => console.error(err),
-      })
-    }
+const ListPage = ({
+  data: {
+    loading,
+    allCampaigns,
   }
-
-  render () {
-    if (this.props.data.loading) {
-      return (<div>Loading</div>)
-    }
-    return (
-      <div className='w-100 flex justify-center'>
-        <Link to='/create' className='fixed bg-white top-0 right-0 pa4 ttu dim black no-underline'>
-          + Start a Cause
-        </Link>
-        <div className='w-100' style={{ maxWidth: 400 }}>
-          {this.props.data.allCampaigns.map((campaign) =>
-            <Link
-              key={campaign.id}
-              to={`/causes/${campaign.slug}`}
-            >
-              <CampaignListItem campaign={campaign} />
-            </Link>
-          )}
-        </div>
+}) => {
+  if (loading) {
+    return (<div>Loading</div>)
+  }
+  return (
+    <div className='w-100 flex justify-center'>
+      <Link to='/create' className='fixed bg-white top-0 right-0 pa4 ttu dim black no-underline'>
+        + Start a Cause
+      </Link>
+      <div className='w-100' style={{ maxWidth: 400 }}>
+        {allCampaigns.map((campaign) =>
+          <Link
+            key={campaign.id}
+            to={`/causes/${campaign.slug}`}
+          >
+            <CampaignListItem campaign={campaign} />
+          </Link>
+        )}
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 const FeedQuery = gql`
