@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import CampaignList from './components/CampaignList'
+import CampaignDetail from './components/CampaignDetail'
 import CreatePage from './components/CreatePage'
 import { Router, Route, browserHistory } from 'react-router'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
@@ -40,8 +41,9 @@ const client = new ApolloClient({
 ReactDOM.render((
   <ApolloProvider client={client}>
     <Router history={browserHistory}>
-      <Route path='/' component={CampaignList} />
-      <Route path='/create' component={CreatePage} />
+        <Route path='/' component={CampaignList} />
+        <Route path='/:campaign' component={CampaignDetail} />
+        <Route path='/create' component={CreatePage} />
     </Router>
   </ApolloProvider>
   ),
