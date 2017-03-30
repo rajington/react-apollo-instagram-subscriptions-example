@@ -66,7 +66,12 @@ class ListPage extends React.Component {
         </Link>
         <div className='w-100' style={{ maxWidth: 400 }}>
           {this.props.data.allCampaigns.map((campaign) =>
-            <CampaignListItem key={campaign.id} campaign={campaign} />
+            <Link
+              key={campaign.id}
+              to={`/causes/${campaign.slug}`}
+            >
+              <CampaignListItem campaign={campaign} />
+            </Link>
           )}
         </div>
       </div>
@@ -78,6 +83,7 @@ const FeedQuery = gql`
   query allCampaigns {
     allCampaigns(orderBy: createdAt_DESC) {
       id
+      slug
       title
       imageUrl
     }

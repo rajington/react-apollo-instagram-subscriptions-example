@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import CampaignList from './components/CampaignList'
 import CampaignDetail from './components/CampaignDetail'
-import CreatePage from './components/CreatePage'
+import CampaignCreate from './components/CampaignCreate'
 import { Router, Route, browserHistory } from 'react-router'
 import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
@@ -42,8 +42,8 @@ ReactDOM.render((
   <ApolloProvider client={client}>
     <Router history={browserHistory}>
         <Route path='/' component={CampaignList} />
-        <Route path='/:campaign' component={CampaignDetail} />
-        <Route path='/create' component={CreatePage} />
+        <Route path='/causes/:campaignSlug' component={CampaignDetail} />
+        <Route path='/create' component={CampaignCreate} />
     </Router>
   </ApolloProvider>
   ),
