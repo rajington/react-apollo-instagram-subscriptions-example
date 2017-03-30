@@ -9,24 +9,33 @@ class CommentForm extends React.Component {
   }
 
   render () {
+    const {
+      author,
+      content,
+    } = this.state
+
     return (
       <div className='w-100 pa4 flex justify-center'>
         <div style={{ maxWidth: 400 }} className=''>
           <input
             className='w-100 pa3 mv2'
-            value={this.state.author}
+            value={author}
             placeholder='Author'
             onChange={(e) => this.setState({author: e.target.value})}
           />
           <input
             className='w-100 pa3 mv2'
-            value={this.state.content}
+            value={content}
             placeholder='Comment'
             onChange={(e) => this.setState({content: e.target.value})}
           />
-          {this.state.author && this.state.content &&
-            <button className='pa3 bg-black-10 bn dim ttu pointer' onClick={this.handleSubmit}>Post</button>
-          }
+          <button
+            className='pa3 bg-black-10 bn dim ttu pointer'
+            disabled={!author || !content}
+            onClick={this.handleSubmit}
+          >
+            Post
+          </button>
         </div>
       </div>
     )
