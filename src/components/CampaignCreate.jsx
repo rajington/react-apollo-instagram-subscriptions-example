@@ -5,12 +5,6 @@ import gql from 'graphql-tag'
 import { slugify } from 'underscore.string'
 
 class CampaignCreate extends React.Component {
-
-  static propTypes = {
-    router: React.PropTypes.object,
-    addPost: React.PropTypes.func,
-  }
-
   state = {
     title: '',
     description: '',
@@ -18,31 +12,37 @@ class CampaignCreate extends React.Component {
   }
 
   render () {
+    const {
+      title,
+      description,
+      imageUrl,
+    } = this.state
+
     return (
       <div className='w-100 pa4 flex justify-center'>
         <div style={{ maxWidth: 400 }} className=''>
           <input
             className='w-100 pa3 mv2'
-            value={this.state.title}
+            value={title}
             placeholder='Title'
             onChange={(e) => this.setState({title: e.target.value})}
           />
           <input
             className='w-100 pa3 mv2'
-            value={this.state.description}
+            value={description}
             placeholder='Description'
             onChange={(e) => this.setState({description: e.target.value})}
           />
           <input
             className='w-100 pa3 mv2'
-            value={this.state.imageUrl}
+            value={imageUrl}
             placeholder='Image Url'
             onChange={(e) => this.setState({imageUrl: e.target.value})}
           />
-          {this.state.imageUrl &&
-            <img src={this.state.imageUrl} role='presentation' className='w-100 mv3' />
+          {imageUrl &&
+            <img src={imageUrl} role='presentation' className='w-100 mv3' />
           }
-          {this.state.title && this.state.imageUrl &&
+          {title && imageUrl &&
             <button className='pa3 bg-black-10 bn dim ttu pointer' onClick={this.handlePost}>Post</button>
           }
         </div>
@@ -51,27 +51,20 @@ class CampaignCreate extends React.Component {
   }
 
   handlePost = () => {
-    const {
-      title,
-      slug = slugify(title),
-      description,
-      imageUrl,
-    } = this.state
-    
-    this.props.addCampaign({
-      slug,
-      title,
-      description,
-      imageUrl,
-    })
+    this.props.mutate({variables: {
+      slug: slugify(this.state.title),
+      title: this.state.title,
+      description: this.state.description,
+      imageUrl: this.state.imageUrl,
+    }})
       .then(() => {
         this.props.router.push('/')
       })
   }
 }
 
-const addMutation = gql`
-  mutation addCampaign(
+const createCampaign = gql`
+  mutation createCampaign(
     $slug: String!,
     $title: String!,
     $description: String!,
@@ -84,29 +77,10 @@ const addMutation = gql`
       imageUrl: $imageUrl
     ) {
       id
-      slug
-      title
-      description
-      imageUrl
     }
   }
 `
 
-const CampaignCreateWithMutation = graphql(addMutation, {
-  props: ({ ownProps, mutate }) => ({
-    addCampaign: ({ slug, title, description, imageUrl }) =>
-      mutate({
-        variables: { slug, title, description, imageUrl },
-        updateQueries: {
-          allCampaigns: (state, { mutationResult }) => {
-            const newCampaign = mutationResult.data.createCampaign
-            return {
-              allCampaigns: [...state.allCampaigns, newCampaign]
-            }
-          },
-        },
-      })
-  })
-})(withRouter(CampaignCreate))
+const CampaignCreateWithMutation = graphql(createCampaign)(withRouter(CampaignCreate))
 
 export default CampaignCreateWithMutation

@@ -4,7 +4,7 @@ import CampaignListItem from '../components/CampaignListItem'
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 
-const ListPage = ({
+const CampaignList = ({
   data: {
     loading,
     allCampaigns,
@@ -24,7 +24,7 @@ const ListPage = ({
             key={campaign.id}
             to={`/causes/${campaign.slug}`}
           >
-            <CampaignListItem campaign={campaign} />
+            <CampaignListItem {...campaign} />
           </Link>
         )}
       </div>
@@ -32,7 +32,7 @@ const ListPage = ({
   )
 }
 
-const FeedQuery = gql`
+const allCampaigns = gql`
   query allCampaigns {
     allCampaigns(orderBy: createdAt_DESC) {
       id
@@ -43,10 +43,6 @@ const FeedQuery = gql`
   }
 `
 
-const ListPageWithData = graphql(FeedQuery, {
-  options: {
-    forceFetch: true
-  }
-})(ListPage)
+const CampaignListWithData = graphql(allCampaigns)(CampaignList)
 
-export default ListPageWithData
+export default CampaignListWithData

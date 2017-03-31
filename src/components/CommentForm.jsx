@@ -42,20 +42,10 @@ class CommentForm extends React.Component {
   }
 
   handleSubmit = () => {
-    const {
-      author,
-      content,
-    } = this.state
-
-    const {
-      mutate,
-      campaignId,
-    } = this.props
-
-    mutate({variables: {
-      author,
-      content,
-      campaignId,
+    this.props.mutate({variables: {
+      author: this.state.author,
+      content: this.state.content,
+      campaignId: this.props.campaignId,
     }})
       .then(() => {
         this.setState({
@@ -78,8 +68,6 @@ const createComment = gql`
       campaignId: $campaignId
     ) {
       id
-      author
-      content
     }
   }
 `
