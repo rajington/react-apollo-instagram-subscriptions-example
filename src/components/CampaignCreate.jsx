@@ -9,6 +9,8 @@ class CampaignCreate extends React.Component {
     title: '',
     description: '',
     imageUrl: '',
+    goal: 200,
+    duration: 30,
   }
 
   render () {
@@ -16,6 +18,8 @@ class CampaignCreate extends React.Component {
       title,
       description,
       imageUrl,
+      goal,
+      duration,
     } = this.state
 
     return (
@@ -39,12 +43,28 @@ class CampaignCreate extends React.Component {
             placeholder='Image Url'
             onChange={(e) => this.setState({imageUrl: e.target.value})}
           />
+          <input
+            className='w-100 pa3 mv2'
+            value={goal}
+            placeholder='Goal (miles)'
+            onChange={(e) => this.setState({goal: e.target.value})}
+          />
+          <input
+            className='w-100 pa3 mv2'
+            value={duration}
+            placeholder='Duration (days)'
+            onChange={(e) => this.setState({duration: e.target.value})}
+          />
           {imageUrl &&
             <img src={imageUrl} role='presentation' className='w-100 mv3' />
           }
-          {title && imageUrl &&
-            <button className='pa3 bg-black-10 bn dim ttu pointer' onClick={this.handlePost}>Post</button>
-          }
+          <button
+            className='pa3 bg-black-10 bn dim ttu pointer'
+            onClick={this.handlePost}
+            disabled={!(title && imageUrl && goal && duration)}
+          >
+            Create Campaign
+          </button>
         </div>
       </div>
     )
@@ -56,9 +76,12 @@ class CampaignCreate extends React.Component {
       title: this.state.title,
       description: this.state.description,
       imageUrl: this.state.imageUrl,
+      goal: this.state.goal,
+      duration: this.state.duration,
+      start: new Date(),
     }})
-      .then(() => {
-        this.props.router.push('/')
+      .then(({data}) => {
+        this.props.router.push(`/campaigns/${data.createCampaign.slug}`)
       })
   }
 }
@@ -69,14 +92,20 @@ const createCampaign = gql`
     $title: String!,
     $description: String!,
     $imageUrl: String!
+    $goal: Int!
+    $duration: Int!
+    $start: DateTime!
   ) {
     createCampaign(
       slug: $slug,
       title: $title,
       description: $description,
-      imageUrl: $imageUrl
+      imageUrl: $imageUrl,
+      goal: $goal,
+      duration: $duration,
+      start: $start
     ) {
-      id
+      slug
     }
   }
 `

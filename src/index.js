@@ -42,7 +42,7 @@ ReactDOM.render((
   <ApolloProvider client={client}>
     <Router history={browserHistory}>
         <Route path='/' component={CampaignList} />
-        <Route path='/causes/:campaignSlug' component={CampaignDetail} />
+        <Route path='/campaigns/:campaignSlug' component={CampaignDetail} />
         <Route path='/create' component={CampaignCreate} />
     </Router>
   </ApolloProvider>
